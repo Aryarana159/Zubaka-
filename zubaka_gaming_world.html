@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zubaka Gaming World</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:#07070d;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  overflow-x:hidden;
+}
+body:before{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:-1;
+  background:
+    radial-gradient(circle at 15% 15%,rgba(0,255,170,.13),transparent 28%),
+    radial-gradient(circle at 85% 25%,rgba(80,80,255,.13),transparent 30%),
+    radial-gradient(circle at 50% 90%,rgba(255,0,180,.09),transparent 30%);
+}
+header{
+  position:sticky;top:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:15px 5%;
+  background:rgba(7,7,13,.88);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid #20202c;
+}
+.logo{font-size:25px;font-weight:900;color:#00ffb0;text-shadow:0 0 18px #00ffb0}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav a{
+  color:#ddd;text-decoration:none;padding:9px 14px;border-radius:12px;
+  transition:.25s
+}
+nav a:hover{color:#00ffb0;background:#151522}
+.hero{
+  min-height:430px;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:65px 20px;
+}
+.hero-inner{max-width:850px}
+.badge{
+  display:inline-block;padding:8px 15px;border:1px solid #00ffb0;
+  border-radius:30px;color:#00ffb0;box-shadow:0 0 18px rgba(0,255,176,.2);
+  font-size:13px;font-weight:bold;letter-spacing:1px
+}
+h1{
+  font-size:clamp(42px,8vw,82px);margin:18px 0 10px;
+  line-height:.95;color:#fff;
+  text-shadow:0 0 25px rgba(0,255,176,.35)
+}
+.hero p{font-size:18px;color:#aaa;max-width:650px;margin:20px auto 30px}
+.buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{
+  border:0;border-radius:14px;padding:14px 24px;font-weight:800;
+  cursor:pointer;text-decoration:none;display:inline-block;transition:.25s
+}
+.primary{background:#00ffb0;color:#03110c;box-shadow:0 0 25px rgba(0,255,176,.3)}
+.primary:hover{transform:translateY(-3px);box-shadow:0 0 35px rgba(0,255,176,.55)}
+.secondary{background:#161622;color:#fff;border:1px solid #30303e}
+.secondary:hover{transform:translateY(-3px);border-color:#00ffb0}
+.section{width:min(1200px,92%);margin:0 auto 55px}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:18px}
+.section h2{font-size:30px;margin:0}
+.section-head span{color:#888}
+.search{
+  width:100%;padding:16px 18px;border-radius:15px;border:1px solid #292938;
+  background:#101019;color:white;font-size:16px;outline:none
+}
+.search:focus{border-color:#00ffb0;box-shadow:0 0 15px rgba(0,255,176,.12)}
+.categories{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}
+.cat{
+  border:1px solid #292938;background:#101019;color:#bbb;padding:9px 14px;
+  border-radius:20px;cursor:pointer
+}
+.cat:hover,.cat.active{background:#00ffb0;color:#06130f;border-color:#00ffb0}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px
+}
+.card{
+  position:relative;overflow:hidden;min-height:190px;padding:20px;
+  background:linear-gradient(145deg,#171725,#0d0d15);
+  border:1px solid #292938;border-radius:20px;cursor:pointer;
+  transition:transform .25s,border-color .25s,box-shadow .25s
+}
+.card:hover{
+  transform:translateY(-7px) scale(1.015);border-color:#00ffb0;
+  box-shadow:0 15px 35px rgba(0,0,0,.35),0 0 22px rgba(0,255,176,.12)
+}
+.card:after{
+  content:"";position:absolute;width:130px;height:130px;right:-35px;bottom:-50px;
+  background:var(--glow,#00ffb0);filter:blur(45px);opacity:.18
+}
+.icon{
+  width:64px;height:64px;border-radius:18px;display:grid;place-items:center;
+  font-size:33px;background:#222235;border:1px solid #35354a;margin-bottom:16px
+}
+.card h3{margin:0 0 7px;font-size:20px}
+.card p{margin:0;color:#8e8e9d;font-size:13px}
+.tag{
+  display:inline-block;margin-top:15px;padding:5px 9px;border-radius:8px;
+  background:#20202e;color:#00ffb0;font-size:11px;font-weight:bold
+}
+.play-overlay{
+  position:absolute;right:16px;top:16px;background:#00ffb0;color:#06130f;
+  border-radius:50%;width:38px;height:38px;display:grid;place-items:center;
+  font-weight:bold
+}
+.stats{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:35px
+}
+.stat{background:#101019;border:1px solid #252533;border-radius:17px;padding:20px;text-align:center}
+.stat b{display:block;font-size:28px;color:#00ffb0}.stat span{color:#888;font-size:13px}
+#gameModal{
+  position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;
+  display:none;align-items:center;justify-content:center;padding:18px
+}
+#gameModal.open{display:flex}
+.modal{
+  width:min(850px,100%);max-height:92vh;overflow:auto;background:#0e0e17;
+  border:1px solid #333346;border-radius:22px;padding:20px;position:relative
+}
+.close{
+  position:absolute;right:18px;top:15px;background:#242433;color:#fff;
+  border:0;border-radius:10px;width:38px;height:38px;font-size:20px;cursor:pointer
+}
+#gameTitle{margin:0 50px 8px;color:#00ffb0}
+#gameInfo{color:#999;margin-top:0}
+canvas{
+  display:block;margin:18px auto;background:#050508;border:2px solid #2b2b3b;
+  border-radius:12px;max-width:100%;height:auto
+}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.control{
+  background:#191927;border:1px solid #303044;color:#fff;padding:10px 14px;
+  border-radius:10px
+}
+footer{text-align:center;color:#666;border-top:1px solid #20202c;padding:30px;margin-top:30px}
+.hidden{display:none!important}
+@media(max-width:650px){
+  header{align-items:flex-start;gap:10px;flex-direction:column}
+  nav{width:100%}
+  .stats{grid-template-columns:1fr}
+  .hero{min-height:390px}
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="logo">⚡ ZUBAKA</div>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#games">Games</a>
+    <a href="#categories">Categories</a>
+    <a href="#about">About</a>
+  </nav>
+</header>
+
+<main id="home">
+<section class="hero">
+  <div class="hero-inner">
+    <div class="badge">🎮 PLAY • DISCOVER • HAVE FUN</div>
+    <h1>ZUBAKA<br>GAMING WORLD</h1>
+    <p>Your browser gaming zone — no giant downloads, just pick a game and play.</p>
+    <div class="buttons">
+      <a class="btn primary" href="#games">🎮 PLAY GAMES</a>
+      <button class="btn secondary" onclick="randomGame()">🎲 RANDOM GAME</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="gameCount">0</b><span>Games</span></div>
+      <div class="stat"><b>100%</b><span>Browser Based</span></div>
+      <div class="stat"><b>∞</b><span>Fun</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="games">
+  <div class="section-head">
+    <div><h2>🔥 All Games</h2><span>Choose something and start playing</span></div>
+  </div>
+  <input id="search" class="search" placeholder="🔍 Search games..." oninput="renderGames()">
+  <div class="categories" id="categories">
+    <button class="cat active" onclick="setCategory('All',this)">All</button>
+    <button class="cat" onclick="setCategory('Racing',this)">🏎️ Racing</button>
+    <button class="cat" onclick="setCategory('Arcade',this)">👾 Arcade</button>
+    <button class="cat" onclick="setCategory('Puzzle',this)">🧩 Puzzle</button>
+    <button class="cat" onclick="setCategory('Sports',this)">⚽ Sports</button>
+    <button class="cat" onclick="setCategory('Action',this)">🎯 Action</button>
+  </div>
+  <div class="grid" id="gameGrid" style="margin-top:20px"></div>
+</section>
+
+<section class="section" id="about">
+  <div class="section-head"><h2>🌟 About Zubaka</h2></div>
+  <div class="card">
+    <h3>A gaming website made from scratch</h3>
+    <p>This version uses CSS-created game cards instead of external image files. The games are small original browser games written in HTML, CSS and JavaScript.</p>
+  </div>
+</section>
+</main>
+
+<div id="gameModal">
+  <div class="modal">
+    <button class="close" onclick="closeGame()">×</button>
+    <h2 id="gameTitle"></h2>
+    <p id="gameInfo"></p>
+    <div id="gameArea"></div>
+  </div>
+</div>
+
+<footer>⚡ Zubaka Gaming World • Built for browser fun</footer>
+
+<script>
+const games=[
+ {id:'click',name:'Click Rush',cat:'Arcade',icon:'⚡',desc:'Click as fast as you can!',color:'#00ffb0'},
+ {id:'snake',name:'Neon Snake',cat:'Arcade',icon:'🐍',desc:'Eat the dots and grow.',color:'#72ff00'},
+ {id:'memory',name:'Memory Match',cat:'Puzzle',icon:'🧠',desc:'Find all matching pairs.',color:'#b06cff'},
+ {id:'reaction',name:'Reaction Test',cat:'Action',icon:'🎯',desc:'Test your reaction speed.',color:'#ffdc40'},
+ {id:'runner',name:'Pixel Runner',cat:'Arcade',icon:'🏃',desc:'Jump over obstacles.',color:'#ff5b5b'},
+ {id:'racer',name:'Mini Racer',cat:'Racing',icon:'🏎️',desc:'Dodge traffic and survive.',color:'#4c8dff'},
+ {id:'drift',name:'Drift Zone',cat:'Racing',icon:'💨',desc:'Keep the car sliding.',color:'#00d9ff'},
+ {id:'pong',name:'Neon Pong',cat:'Sports',icon:'🏓',desc:'Beat the computer.',color:'#ff6bd6'},
+ {id:'basket',name:'Hoop Shot',cat:'Sports',icon:'🏀',desc:'Score as many baskets as possible.',color:'#ff8b2d'},
+ {id:'breakout',name:'Brick Breaker',cat:'Arcade',icon:'🧱',desc:'Break every brick.',color:'#ff4f9a'},
+ {id:'math',name:'Math Blitz',cat:'Puzzle',icon:'➗',desc:'Solve quick equations.',color:'#8b7cff'},
+ {id:'tictac',name:'Tic Tac Toe',cat:'Puzzle',icon:'⭕',desc:'Classic 3×3 battle.',color:'#00b7ff'},
+ {id:'dodge',name:'Dodge Zone',cat:'Action',icon:'☄️',desc:'Avoid falling objects.',color:'#ff4d4d'},
+ {id:'aim',name:'Target Pop',cat:'Action',icon:'🎯',desc:'Hit targets before time runs out.',color:'#00ff9d'},
+ {id:'coin',name:'Coin Catcher',cat:'Arcade',icon:'🪙',desc:'Catch coins, avoid bombs.',color:'#ffd000'},
+ {id:'road',name:'Highway Rush',cat:'Racing',icon:'🛣️',desc:'Survive the highway.',color:'#7c9cff'}
+];
+let category='All';
+
+function setCategory(c,el){
+ category=c;
+ document.querySelectorAll('.cat').forEach(x=>x.classList.remove('active'));
+ el.classList.add('active'); renderGames();
+}
+function renderGames(){
+ const q=document.getElementById('search').value.toLowerCase();
+ const list=games.filter(g=>(category==='All'||g.cat===category)&&
+   (g.name.toLowerCase().includes(q)||g.desc.toLowerCase().includes(q)));
+ document.getElementById('gameGrid').innerHTML=list.map(g=>`
+  <div class="card" style="--glow:${g.color}" onclick="openGame('${g.id}')">
+   <div class="play-overlay">▶</div>
+   <div class="icon">${g.icon}</div>
+   <h3>${g.name}</h3><p>${g.desc}</p>
+   <span class="tag">${g.cat}</span>
+  </div>`).join('');
+ document.getElementById('gameCount').textContent=games.length;
+}
+function openGame(id){
+ const g=games.find(x=>x.id===id);
+ document.getElementById('gameTitle').textContent=g.icon+' '+g.name;
+ document.getElementById('gameInfo').textContent=g.desc;
+ document.getElementById('gameModal').classList.add('open');
+ startGame(id);
+}
+function closeGame(){
+ document.getElementById('gameModal').classList.remove('open');
+ document.getElementById('gameArea').innerHTML='';
+}
+document.getElementById('gameModal').addEventListener('click',e=>{if(e.target.id==='gameModal')closeGame()});
+function randomGame(){openGame(games[Math.floor(Math.random()*games.length)].id)}
+
+function box(html){document.getElementById('gameArea').innerHTML=html}
+function canvasGame(w=500,h=350){
+ box(`<canvas id="gameCanvas" width="${w}" height="${h}"></canvas><div class="controls" id="controls"></div>`);
+ return document.getElementById('gameCanvas').getContext('2d');
+}
+function startGame(id){
+ const f={
+  click:clickGame,snake:snakeGame,memory:memoryGame,reaction:reactionGame,
+  runner:runnerGame,racer:racerGame,drift:driftGame,pong:pongGame,
+  basket:basketGame,breakout:breakoutGame,math:mathGame,tictac:tictacGame,
+  dodge:dodgeGame,aim:aimGame,coin:coinGame,road:roadGame
+ }; f[id]();
+}
+
+/* 1 Click Rush */
+function clickGame(){
+ box(`<div style="text-align:center"><h2 id="score">Score: 0</h2><p>Click the button as many times as possible in 10 seconds.</p>
+ <button class="btn primary" id="clickBtn" style="font-size:28px">CLICK!</button><p id="timer">10</p></div>`);
+ let s=0,t=10,over=false;
+ const b=document.getElementById('clickBtn');
+ b.onclick=()=>{if(!over){s++;document.getElementById('score').textContent='Score: '+s}};
+ const iv=setInterval(()=>{t--;document.getElementById('timer').textContent=t;
+  if(t<=0){over=true;clearInterval(iv);b.disabled=true;b.textContent='TIME! '+s}},1000);
+}
+
+/* 2 Snake */
+function snakeGame(){
+ const c=canvasGame(420,420),N=21,cell=20;
+ let snake=[{x:10,y:10}],dir={x:1,y:0},next=dir,food={x:5,y:5},score=0;
+ document.onkeydown=e=>{if(e.key==='ArrowUp'&&dir.y===0)next={x:0,y:-1};
+ if(e.key==='ArrowDown'&&dir.y===0)next={x:0,y:1};
+ if(e.key==='ArrowLeft'&&dir.x===0)next={x:-1,y:0};
+ if(e.key==='ArrowRight'&&dir.x===0)next={x:1,y:0}};
+ function spawn(){do{food={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(snake.some(p=>p.x===food.x&&p.y===food.y))}
+ function draw(){
+  c.fillStyle='#050508';c.fillRect(0,0,420,420);c.fillStyle='#ffdc40';c.fillRect(food.x*cell,food.y*cell,cell-2,cell-2);
+  snake.forEach((p,i)=>{c.fillStyle=i?'#00b979':'#00ffb0';c.fillRect(p.x*cell,p.y*cell,cell-2,cell-2)});
+  c.fillStyle='#fff';c.font='16px Arial';c.fillText('Score: '+score,10,18)
+ }
+ const iv=setInterval(()=>{
+  dir=next;let h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+  if(h.x<0||h.x>=N||h.y<0||h.y>=N||snake.some(p=>p.x===h.x&&p.y===h.y)){
+   clearInterval(iv);c.fillStyle='#fff';c.font='28px Arial';c.fillText('GAME OVER',125,215);return}
+  snake.unshift(h);if(h.x===food.x&&h.y===food.y){score++;spawn()}else snake.pop();draw()
+ },100);draw()
+}
+
+/* 3 Memory */
+function memoryGame(){
+ box(`<div style="display:grid;grid-template-columns:repeat(4,70px);gap:8px;justify-content:center" id="mem"></div><p id="memScore" style="text-align:center">Moves: 0</p>`);
+ let vals=['🚗','🚗','🚀','🚀','⚽','⚽','🐍','🐍','🎯','🎯','🏆','🏆','👾','👾','🧩','🧩'].sort(()=>Math.random()-.5);
+ let first=null,lock=false,moves=0,found=0;
+ const el=document.getElementById('mem');
+ vals.forEach((v,i)=>{let b=document.createElement('button');b.className='btn secondary';b.style.height='70px';b.style.fontSize='28px';b.textContent='?';b.onclick=()=>{
+  if(lock||b===first||b.dataset.done)return;b.textContent=v;
+  if(!first){first=b;return} moves++;document.getElementById('memScore').textContent='Moves: '+moves;
+  if(first.textContent===b.textContent){first.dataset.done='1';b.dataset.done='1';first=null;found++;if(found===8)document.getElementById('memScore').textContent='🎉 Completed in '+moves+' moves!'}
+  else{lock=true;setTimeout(()=>{first.textContent='?';b.textContent='?';first=null;lock=false},650)}
+ };el.appendChild(b)})
+}
+
+/* 4 Reaction */
+function reactionGame(){
+ box(`<div id="react" style="height:260px;border-radius:18px;background:#191927;display:grid;place-items:center;cursor:pointer;font-size:25px">WAIT...</div><p id="reactText" style="text-align:center">Click when it turns green.</p>`);
+ let ready=false,start=0;
+ const r=document.getElementById('react'),t=document.getElementById('reactText');
+ let delay=1000+Math.random()*2500;
+ const tm=setTimeout(()=>{ready=true;start=performance.now();r.style.background='#00a86b';r.textContent='CLICK!'},delay);
+ r.onclick=()=>{if(ready)t.textContent='⚡ '+Math.round(performance.now()-start)+' ms';else{clearTimeout(tm);t.textContent='Too early! Try again.'}}
+}
+
+/* 5 Runner */
+function runnerGame(){
+ const c=canvasGame(600,300),ctx=c;let y=235,vy=0,obs=[],score=0,dead=false;
+ function jump(){if(y>=235)vy=-12} document.onkeydown=e=>{if(e.code==='Space'||e.key==='ArrowUp')jump()};c.onclick=jump;
+ function loop(){if(dead)return;ctx.fillStyle='#090912';ctx.fillRect(0,0,600,300);vy+=.55;y+=vy;if(y>235){y=235;vy=0}
+  if(Math.random()<.025)obs.push({x:600,w:22+Math.random()*18});
+  obs.forEach(o=>o.x-=5);obs=obs.filter(o=>o.x>-50);score++;
+  ctx.fillStyle='#00ffb0';ctx.fillRect(80,y,30,40);
+  ctx.fillStyle='#ff4f5f';obs.forEach(o=>ctx.fillRect(o.x,245-o.w,o.w,o.w));
+  if(obs.some(o=>o.x<110&&o.x+o.w>80&&245-o.w<y+40)){dead=true;ctx.fillStyle='#fff';ctx.font='28px Arial';ctx.fillText('GAME OVER • '+score,190,150);return}
+  ctx.fillStyle='#aaa';ctx.font='16px Arial';ctx.fillText('Score '+score,15,25);requestAnimationFrame(loop)}
+ loop()
+}
+
+/* 6 Racer */
+function racerGame(){
+ const c=canvasGame(500,400),ctx=c;let x=230,traffic=[],score=0,dead=false;
+ document.onkeydown=e=>{if(e.key==='ArrowLeft')x-=22;if(e.key==='ArrowRight')x+=22;x=Math.max(150,Math.min(325,x))};
+ function loop(){if(dead)return;ctx.fillStyle='#15151c';ctx.fillRect(0,0,500,400);
+  ctx.fillStyle='#30303b';ctx.fillRect(130,0,240,400);ctx.strokeStyle='#fff';ctx.setLineDash([25,25]);ctx.lineDashOffset=-(score%50);ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(250,0);ctx.lineTo(250,400);ctx.stroke();ctx.setLineDash([]);
+  if(Math.random()<.025)traffic.push({x:[160,210,260,310][Math.floor(Math.random()*4)],y:-60});
+  traffic.forEach(o=>o.y+=5);traffic=traffic.filter(o=>o.y<430);score++;
+  ctx.fillStyle='#00ffb0';ctx.fillRect(x,330,35,55);
+  ctx.fillStyle='#ff5267';traffic.forEach(o=>ctx.fillRect(o.x,o.y,35,55));
+  if(traffic.some(o=>o.x<x+35&&o.x+35>x&&o.y<385&&o.y+55>330)){dead=true;ctx.fillStyle='#fff';ctx.font='28px Arial';ctx.fillText('CRASH! '+score,185,200);return}
+  requestAnimationFrame(loop)}
+ loop()
+}
+
+/* 7 Drift Zone */
+function driftGame(){
+ const c=canvasGame(600,400),ctx=c;let car={x:300,y:200,a:0},pts=0;
+ document.onkeydown=e=>{if(e.key==='ArrowLeft')car.a-=.15;if(e.key==='ArrowRight')car.a+=.15;if(e.key==='ArrowUp'){car.x+=Math.cos(car.a)*5;car.y+=Math.sin(car.a)*5;pts++}};
+ function loop(){ctx.fillStyle='#0b1012';ctx.fillRect(0,0,600,400);ctx.strokeStyle='#27383a';ctx.lineWidth=30;ctx.beginPath();ctx.arc(300,200,120,0,Math.PI*2);ctx.stroke();
+  car.x=(car.x+600)%600;car.y=(car.y+400)%400;ctx.save();ctx.translate(car.x,car.y);ctx.rotate(car.a);ctx.fillStyle='#00d9ff';ctx.fillRect(-22,-11,44,22);ctx.restore();
+  ctx.fillStyle='#fff';ctx.font='16px Arial';ctx.fillText('Drift points: '+pts,15,25);requestAnimationFrame(loop)}loop()
+}
+
+/* 8 Pong */
+function pongGame(){
+ const c=canvasGame(600,350),ctx=c;let py=140,by=140,bx=300,dx=4,dy=3,score=0;
+ document.onmousemove=e=>{const r=c.getBoundingClientRect();py=(e.clientY-r.top)-35;py=Math.max(0,Math.min(280,py))};
+ function loop(){ctx.fillStyle='#050508';ctx.fillRect(0,0,600,350);ctx.fillStyle='#00ffb0';ctx.fillRect(15,py,12,70);ctx.fillStyle='#ff5b7c';ctx.fillRect(573,by,12,70);
+  bx+=dx;by+=dy;if(by<0||by>340)dy*=-1;by+=(by+35<py+35?-.5:.5);
+  if(bx<27&&by+10>py&&by<py+70){dx=Math.abs(dx);score++}
+  if(bx>570&&by+10>by&&by<by+70)dx=-Math.abs(dx);
+  if(bx>580){bx=300;by=175;dx=-4}
+  if(bx<0){bx=300;by=175;dx=4;score=Math.max(0,score-1)}
+  ctx.fillStyle='#fff';ctx.fillRect(bx,by,12,12);ctx.font='20px Arial';ctx.fillText('Score '+score,15,25);requestAnimationFrame(loop)}loop()
+}
+
+/* 9 Basket */
+function basketGame(){
+ box(`<div style="text-align:center"><p>Click SHOOT when the ball is near the hoop!</p><div style="font-size:90px">🏀 🏀 🏀</div><button class="btn primary" id="shoot">SHOOT</button><h2 id="basketScore">Score: 0</h2></div>`);
+ let s=0;document.getElementById('shoot').onclick=()=>{if(Math.random()>.35)s++;document.getElementById('basketScore').textContent='Score: '+s}
+}
+
+/* 10 Breakout */
+function breakoutGame(){
+ const c=canvasGame(600,400),ctx=c;let x=280,bx=300,by=340,dx=3,dy=-3,br=[];
+ for(let r=0;r<4;r++)for(let col=0;col<9;col++)br.push({x:35+col*60,y:35+r*25,on:1});
+ document.onkeydown=e=>{if(e.key==='ArrowLeft')x-=25;if(e.key==='ArrowRight')x+=25;x=Math.max(0,Math.min(540,x))};
+ function loop(){ctx.fillStyle='#080810';ctx.fillRect(0,0,600,400);ctx.fillStyle='#00ffb0';ctx.fillRect(x,370,60,12);
+  br.forEach(b=>{if(b.on){ctx.fillStyle='#765cff';ctx.fillRect(b.x,b.y,50,18)}});bx+=dx;by+=dy;
+  if(bx<0||bx>590)dx*=-1;if(by<0)dy*=-1;if(by>360&&bx>x&&bx<x+60)dy=-Math.abs(dy);
+  br.forEach(b=>{if(b.on&&bx>b.x&&bx<b.x+50&&by>b.y&&by<b.y+18){b.on=0;dy*=-1}});
+  if(by>400){bx=300;by=340}
+  ctx.fillStyle='#fff';ctx.fillRect(bx,by,10,10);requestAnimationFrame(loop)}loop()
+}
+
+/* 11 Math Blitz */
+function mathGame(){
+ box(`<div style="text-align:center"><h2 id="question"></h2><input id="answer" class="search" style="max-width:300px;text-align:center" type="number"><br><button class="btn primary" id="submitMath" style="margin-top:12px">ANSWER</button><p id="mathScore">Score: 0</p></div>`);
+ let a,b,op,ans,s=0,n=0;
+ function next(){a=2+Math.floor(Math.random()*18);b=2+Math.floor(Math.random()*18);op=Math.random()<.5?'+':'×';ans=op==='+'?a+b:a*b;document.getElementById('question').textContent=a+' '+op+' '+b+' = ?';document.getElementById('answer').value='';document.getElementById('answer').focus()}
+ document.getElementById('submitMath').onclick=()=>{if(+document.getElementById('answer').value===ans)s++;n++;document.getElementById('mathScore').textContent='Score: '+s+' / '+n;next()}
+ next()
+}
+
+/* 12 Tic Tac Toe */
+function tictacGame(){
+ box(`<div id="ttt" style="display:grid;grid-template-columns:repeat(3,90px);gap:7px;justify-content:center"></div><p id="tttStatus" style="text-align:center">Your turn: X</p>`);
+ let b=Array(9).fill(''),over=false;const el=document.getElementById('ttt');
+ function win(p){return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]].some(x=>x.every(i=>p[i]===p[x[0]]&&p[i]))}
+ function render(){el.innerHTML=b.map((v,i)=>`<button class="btn secondary" style="height:90px;font-size:35px">${v}</button>`).join('');
+ [...el.children].forEach((x,i)=>x.onclick=()=>{if(over||b[i])return;b[i]='X';if(win(b)){status('🎉 You win!');return}if(!b.includes('')){status('Draw!');return}let free=b.map((v,j)=>v?null:j).filter(v=>v!==null);b[free[Math.floor(Math.random()*free.length)]]='O';if(win(b))status('Computer wins!');else if(!b.includes(''))status('Draw!');render()})}
+ function status(s){over=true;document.getElementById('tttStatus').textContent=s;render()}render()
+}
+
+/* 13 Dodge */
+function dodgeGame(){
+ const c=canvasGame(500,400),ctx=c;let x=235,items=[],score=0,dead=false;
+ document.onkeydown=e=>{if(e.key==='ArrowLeft')x-=25;if(e.key==='ArrowRight')x+=25;x=Math.max(0,Math.min(470,x))};
+ function loop(){if(dead)return;ctx.fillStyle='#090912';ctx.fillRect(0,0,500,400);if(Math.random()<.04)items.push({x:Math.random()*480,y:-20});
+ items.forEach(o=>o.y+=4);items=items.filter(o=>o.y<420);score++;
+ ctx.fillStyle='#00ffb0';ctx.fillRect(x,350,30,30);ctx.fillStyle='#ff365c';items.forEach(o=>ctx.fillRect(o.x,o.y,20,20));
+ if(items.some(o=>o.x<x+30&&o.x+20>x&&o.y<380&&o.y+20>350)){dead=true;ctx.fillStyle='#fff';ctx.font='28px Arial';ctx.fillText('GAME OVER',170,200);return}
+ ctx.fillStyle='#fff';ctx.font='16px Arial';ctx.fillText(score,15,25);requestAnimationFrame(loop)}loop()
+}
+
+/* 14 Aim */
+function aimGame(){
+ const c=canvasGame(600,380),ctx=c;let x=100,y=100,s=0,t=20,over=false;
+ function target(){x=30+Math.random()*520;y=40+Math.random()*300}
+ c.onclick=e=>{if(over)return;let r=c.getBoundingClientRect(),mx=(e.clientX-r.left)*600/r.width,my=(e.clientY-r.top)*380/r.height;
+ if((mx-x)**2+(my-y)**2<35**2){s++;target()}}
+ const iv=setInterval(()=>{t--;if(t<=0){over=true;clearInterval(iv)}},1000);
+ function loop(){ctx.fillStyle='#080810';ctx.fillRect(0,0,600,380);ctx.strokeStyle='#fff';ctx.beginPath();ctx.arc(x,y,28,0,7);ctx.stroke();ctx.fillStyle='#ff4060';ctx.beginPath();ctx.arc(x,y,7,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.font='18px Arial';ctx.fillText('Score '+s+'   Time '+t,15,25);if(!over)requestAnimationFrame(loop);else ctx.fillText('TIME UP!',260,190)}loop()
+}
+
+/* 15 Coin Catcher */
+function coinGame(){
+ const c=canvasGame(500,400),ctx=c;let x=230,items=[],s=0,dead=false;
+ document.onkeydown=e=>{if(e.key==='ArrowLeft')x-=25;if(e.key==='ArrowRight')x+=25;x=Math.max(0,Math.min(450,x))};
+ function loop(){if(dead)return;ctx.fillStyle='#080810';ctx.fillRect(0,0,500,400);if(Math.random()<.045)items.push({x:Math.random()*460,y:-20,b:Math.random()<.2});
+ items.forEach(o=>o.y+=4);items=items.filter(o=>o.y<420);ctx.fillStyle='#ffd000';ctx.fillRect(x,360,50,15);
+ items.forEach(o=>{ctx.fillStyle=o.b?'#ff355d':'#ffd000';ctx.beginPath();ctx.arc(o.x+10,o.y+10,10,0,7);ctx.fill()});
+ items.forEach(o=>{if(o.y+20>350&&o.x<x+50&&o.x+20>x){o.y=500;if(o.b)dead=true;else s++}});
+ ctx.fillStyle='#fff';ctx.font='16px Arial';ctx.fillText('Coins: '+s,15,25);if(!dead)requestAnimationFrame(loop);else ctx.fillText('💥 Bomb! Score '+s,180,200)}loop()
+}
+
+/* 16 Highway Rush */
+function roadGame(){
+ const c=canvasGame(500,400),ctx=c;let x=225,cars=[],score=0,dead=false;
+ document.onkeydown=e=>{if(e.key==='ArrowLeft')x-=20;if(e.key==='ArrowRight')x+=20;x=Math.max(140,Math.min(325,x))};
+ function loop(){if(dead)return;ctx.fillStyle='#151515';ctx.fillRect(0,0,500,400);ctx.fillStyle='#343434';ctx.fillRect(120,0,260,400);
+ ctx.strokeStyle='#ddd';ctx.setLineDash([20,20]);ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(250,0);ctx.lineTo(250,400);ctx.stroke();ctx.setLineDash([]);
+ if(Math.random()<.03)cars.push({x:145+Math.floor(Math.random()*4)*55,y:-60});cars.forEach(o=>o.y+=6);cars=cars.filter(o=>o.y<420);
+ ctx.fillStyle='#00ffb0';ctx.fillRect(x,330,35,55);ctx.fillStyle='#ff405f';cars.forEach(o=>ctx.fillRect(o.x,o.y,35,55));
+ score++;if(cars.some(o=>o.x<x+35&&o.x+35>x&&o.y+55>330&&o.y<385)){dead=true;ctx.fillStyle='#fff';ctx.font='28px Arial';ctx.fillText('CRASH! '+score,185,200);return}
+ requestAnimationFrame(loop)}loop()
+}
+
+renderGames();
+</script>
+</body>
+</html>
